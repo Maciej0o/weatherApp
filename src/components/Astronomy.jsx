@@ -1,7 +1,14 @@
+import { useContext } from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 
+import { WeatherContext } from '../state/WeatherContext';
+
 export const Astronomy = (props) => {
+  const context = useContext(WeatherContext);
+
+  console.log(context);
+
   return (
     <Card
       style={{
@@ -15,7 +22,7 @@ export const Astronomy = (props) => {
       }}
     >
       <Typography variant="p">
-        Sunrise {props.astronomy.sunrise}
+        Sunrise {context.city} {props.astronomy.sunrise}
       </Typography>
       <Typography variant="p">
         Sunset {props.astronomy.sunset}

@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import { searchApi } from '../api';
+import { WeatherContext } from '../state/WeatherContext';
 
 export const CityAutocomplete = ({ onCitySelect }) => {
   const [city, setCity] = useState('');
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const context = useContext(WeatherContext);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -45,6 +48,7 @@ export const CityAutocomplete = ({ onCitySelect }) => {
       }}
       onChange={(event, newValue) => {
         newValue?.name && onCitySelect(newValue.name);
+        newValue?.name && context.setCity(newValue.name);
       }}
       loading={loading}
       isOptionEqualToValue={(option, value) =>

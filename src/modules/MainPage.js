@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { weatherApi, astronomyApi } from '../api';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -11,6 +10,7 @@ import { WeekWeather } from '../components/WeekWeather';
 import { CityAutocomplete } from '../components/CityAutocomplete';
 import { AlertWind } from '../components/AlertWind';
 import { Astronomy } from '../components/Astronomy';
+import { useForecast } from './useForecast';
 
 /*
 Poprawki css
@@ -28,50 +28,29 @@ https://www.weatherapi.com/api-explorer.aspx#astronomy
 */
 
 export const MainPage = () => {
-  const [currentWeather, setCurrentWeather] = useState(null);
-  const [locationWeather, setLocationWeather] = useState(null);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [city, setCity] = useState('Warsaw');
-  const [forecast, setForecast] = useState(null);
-  const [astronomy, setAstronomy] = useState(null);
 
-  const date = new Date();
-  let actualDate =
-    date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate();
+  const {
+    currentWeather,
+    locationWeather,
+    error,
+    loading,
+    forecast,
+    astronomy,
+    fetchCurrentWeather,
+  } = useForecast();
 
   useEffect(() => {
-    const fetchCurrentWeather = async () => {
-      setLoading(true);
-      try {
-        const [res, res1] = await Promise.all([
-          weatherApi.get('', {
-            params: {
-              q: city,
-              days: '7',
-              aqi: 'no',
-            },
-          }),
-          astronomyApi.get('', {
-            params: {
-              q: city,
-              dt: actualDate,
-            },
-          }),
-        ]);
-        setCurrentWeather(res.data.current);
-        setLocationWeather(res.data.location);
-        setForecast(res.data.forecast.forecastday);
-        setAstronomy(res1.data.astronomy.astro);
-      } catch (e) {
-        console.error('Error while fetching current weather', e);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCurrentWeather();
-  }, [actualDate, city]);
+    const date = new Date();
+
+    let actualDate =
+      date.getFullYear() +
+      '-' +
+      date.getMonth() +
+      '-' +
+      date.getDate();
+    fetchCurrentWeather(city, actualDate);
+  }, [city, fetchCurrentWeather]);
 
   return (
     <Container maxWidth="md">
